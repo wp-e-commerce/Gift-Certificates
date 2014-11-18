@@ -1,0 +1,13 @@
+#dpp-gift-certificate label,
+#dpp-gift-certificate input {
+    display: block;
+}
+
+#dpp-gift-certificate .dpp-gc-meta-column {
+    float: left;
+    width: 50%;
+}
+
+.dpp-gc-clearfloats {
+    clear: both;
+}
