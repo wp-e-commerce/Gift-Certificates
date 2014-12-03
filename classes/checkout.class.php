@@ -24,6 +24,7 @@ class DPPCheckout {
      */
     function process_gc() {
         // If attempting to add a new GC, add it
+
         if ( isset( $_POST[DPP_GC_PREFIX . '-apply'] ) && wp_verify_nonce( $_POST[DPP_GC_PREFIX . '-apply'], plugins_url( __FILE__ ) ) ) {
             // Make sure code is there, then add_gc
             if ( isset( $_POST[DPP_GC_PREFIX . '-code'] ) && !empty( $_POST[DPP_GC_PREFIX . '-code'] ) ){
@@ -67,10 +68,11 @@ class DPPCheckout {
     }
 
     function get_gc_total( $total, $subtotal, $shipping, $tax, $coupons_amount ) {
-
+        global $wpsc_cart;
         // If the cart is set to use coupons, exit
-        if ( wpsc_uses_coupons() )
+        if ( wpsc_uses_coupons() && ! empty( $wpsc_cart->coupons_name ) ) {
             return $total;
+        }
 
         global $wpsc_cart;
 
@@ -169,16 +171,6 @@ class DPPCheckout {
             $_SESSION[DPP_GC_PREFIX]['count'] = count( $_SESSION[DPP_GC_PREFIX]['gift_certificates'] );
             $_SESSION[DPP_GC_PREFIX]['reduction'] = $reduction;
             $_SESSION[DPP_GC_PREFIX]['reduction_max'] = $reduction_max;
-
-            // Debug output
-            if ( DPP_GC_DEBUG ) {
-                echo 'New Total: ' . $this->new_total . '</br>';
-                echo 'Reduction: ' . $reduction . '</br>';
-                echo 'Reduction Max: ' . $reduction_max . '</br>';
-                echo 'True Coupons Amount: ' . $this->true_coupons_amount . '</br>';
-                echo 'Coupons Amount in $wpsc_cart: ' . $wpsc_cart->coupons_amount . '</br>';
-                echo 'Coupons Name in $wpsc_cart: ' . var_dump($wpsc_cart->coupons_name) . '</br>';
-            }
         }
 
         // Note that the total has been calculated with GC reductions so they are not doubled
@@ -321,9 +313,12 @@ class DPPCheckout {
     }
 
     function form_field() {
+        global $wpsc_cart;
 
         // Do not display if coupons are being used
-        if ( wpsc_uses_coupons() ) return;
+        if ( wpsc_uses_coupons() && ! empty( $wpsc_cart->coupons_name ) ) {
+            return;
+        }
     ?>
             <form action="" method="post">
                 <?php wp_nonce_field( plugins_url( __FILE__ ), DPP_GC_PREFIX . '-apply' ); ?>
@@ -340,10 +335,11 @@ class DPPCheckout {
     // Will show collected GCs
 
     function list_applied_gcs() {
+        global $wpsc_cart;
         // TODO: possibly allow for GCs to be deleted here
         // TODO: clean up UI
         // TODO: show error if no more GCs can be applied
-        if ( wpsc_uses_coupons() ) return;
+        if ( wpsc_uses_coupons() && ! empty( $wpsc_cart->coupons_name ) ) return;
 
         // Only display if they are available
         if ( isset($_SESSION[DPP_GC_PREFIX]['gift_certificates'] ) && count( $_SESSION[DPP_GC_PREFIX]['gift_certificates'] ) > 0 ) {
