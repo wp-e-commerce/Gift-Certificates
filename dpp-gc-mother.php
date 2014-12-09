@@ -197,7 +197,7 @@ class DPPGiftCertificateMother {
 	 */
 	function add_settings_actions() {
 		// Add the options page
-		add_submenu_page( 'options-general.php', __( 'Gift Certificate Settings', DPP_GC_DOMAIN ), __( 'Gift Certificate Settings', DPP_GC_DOMAIN ), 'manage_options', DPP_GC_PREFIX . '-settings', array( &$this, 'settings_page' ) );
+		add_submenu_page( 'options-general.php', __( 'Gift Certificate', DPP_GC_DOMAIN ), __( 'Gift Certificate', DPP_GC_DOMAIN ), 'manage_options', DPP_GC_PREFIX . '-settings', array( &$this, 'settings_page' ) );
 	}
 
 	/**
